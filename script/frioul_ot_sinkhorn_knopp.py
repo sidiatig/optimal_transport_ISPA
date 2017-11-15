@@ -6,6 +6,7 @@ import model.procedure_function as models
 import numpy as np
 import time
 import os
+import sys
 
 from scipy.spatial.distance import cdist
 
@@ -13,10 +14,11 @@ print(time.strftime('%Y-%m-%d %A %X %Z', time.localtime(time.time())))
 main_dir = os.path.split(os.getcwd())[0]
 result_dir = main_dir + '/results'
 
-experiment = 'fmril'
-nor_method = 'indi'
-clf_method = 'logis'
-cv_start = 0
+args = sys.argv[1:]
+experiment = args[0]
+nor_method = args[1]
+clf_method = args[2]
+cv_start = int(args[3])
 
 note = '{}_{}_{}_{}cvstart'.format(experiment, nor_method, clf_method,
                                           cv_start)
@@ -123,7 +125,7 @@ for i in range(1, int(x.shape[0]/nb_samples_each)):
     x_ot[start:end] = transp_Xs
 
 result_ot = models.gridsearch(x_ot,y_target,subjects,cross_v,
-                              experiment, clf_method,nor_method,cv_start)
+                              experiment, clf_method,nor_method,cv_start,njobs=3)
 np.save(result_dir+'/ot_sinkhorn_knopp_{}'.format(note),result_ot)
 
 print('optimal skinkhorn_knopp', note)
